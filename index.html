@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>涨停板全方位统计分析</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; background: #0f0f1a; color: #e0e0e0; }
+.header { background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 24px 32px; border-bottom: 1px solid #2a2a4a; }
+.header h1 { font-size: 26px; color: #ff6b35; display: flex; align-items: center; gap: 12px; }
+.header h1 small { font-size: 14px; color: #888; font-weight: normal; }
+.header .subtitle { color: #999; margin-top: 6px; font-size: 14px; }
+
+.container { max-width: 1440px; margin: 0 auto; padding: 20px; }
+
+/* Dashboard cards */
+.dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
+.card { background: #1a1a2e; border: 1px solid #2a2a4a; border-radius: 12px; padding: 16px; text-align: center; }
+.card .label { font-size: 12px; color: #888; margin-bottom: 4px; }
+.card .value { font-size: 28px; font-weight: bold; color: #ff6b35; }
+.card .value.red { color: #ff4757; }
+.card .value.gold { color: #ffc312; }
+.card .value.green { color: #2ed573; }
+.card .sub { font-size: 11px; color: #666; margin-top: 2px; }
+
+/* Chart grid */
+.chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.chart-grid .full { grid-column: 1 / -1; }
+.chart-box { background: #1a1a2e; border: 1px solid #2a2a4a; border-radius: 12px; padding: 16px; }
+.chart-box h3 { font-size: 15px; color: #ccc; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.chart-box h3 .badge { font-size: 11px; background: #2a2a4a; padding: 2px 8px; border-radius: 4px; color: #999; }
+.chart-wrapper { position: relative; width: 100%; min-height: 300px; }
+.chart-wrapper.tall { min-height: 400px; }
+
+/* Table */
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.data-table th { background: #252545; color: #999; padding: 8px 10px; text-align: left; font-weight: 500; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 1; }
+.data-table td { padding: 6px 10px; border-bottom: 1px solid #222; }
+.data-table tr:hover { background: #1e1e35; }
+.data-table .code { color: #888; font-family: monospace; }
+.data-table .ban-1 { color: #999; }
+.data-table .ban-2 { color: #7bed9f; }
+.data-table .ban-3 { color: #ffc312; }
+.data-table .ban-4p { color: #ff6b35; font-weight: bold; }
+.concept-tag { display: inline-block; background: #2a2a4a; color: #aaa; padding: 1px 6px; border-radius: 3px; font-size: 11px; margin: 1px; }
+
+/* Date selector */
+.date-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+.date-bar label { color: #888; font-size: 13px; }
+.date-bar input[type="date"] { background: #1a1a2e; border: 1px solid #333; color: #ddd; padding: 6px 12px; border-radius: 6px; font-size: 14px; }
+.date-bar .nav-btn { background: #2a2a4a; border: none; color: #ccc; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 14px; }
+.date-bar .nav-btn:hover { background: #3a3a5a; }
+
+/* Search */
+.search-box { display: flex; gap: 8px; margin-bottom: 16px; }
+.search-box input { flex: 1; background: #1a1a2e; border: 1px solid #333; color: #ddd; padding: 8px 14px; border-radius: 6px; font-size: 14px; max-width: 320px; }
+.search-box input:focus { outline: none; border-color: #ff6b35; }
+
+/* Stock detail */
+.stock-detail { background: #1a1a2e; border: 1px solid #2a2a4a; border-radius: 12px; padding: 16px; margin-bottom: 16px; display: none; }
+.stock-detail .sd-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.stock-detail .sd-header h3 { color: #ff6b35; font-size: 18px; }
+.stock-detail .sd-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin-bottom: 12px; }
+.stock-detail .sd-info .item { text-align: center; padding: 8px; background: #12122a; border-radius: 8px; }
+.stock-detail .sd-info .item .val { font-size: 20px; font-weight: bold; color: #ff6b35; }
+.stock-detail .sd-info .item .lbl { font-size: 11px; color: #666; }
+
+/* Tab */
+.tabs { display: flex; gap: 4px; margin-bottom: 16px; flex-wrap: wrap; }
+.tab { padding: 8px 18px; background: #1a1a2e; border: 1px solid #2a2a4a; border-radius: 8px 8px 0 0; cursor: pointer; color: #888; font-size: 13px; }
+.tab.active { background: #2a2a4a; color: #ff6b35; border-bottom-color: #ff6b35; }
+.tab:hover { color: #ccc; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* Loading */
+.loading { text-align: center; padding: 60px; color: #666; }
+.loading .spinner { width: 40px; height: 40px; border: 3px solid #2a2a4a; border-top-color: #ff6b35; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #0f0f1a; }
+::-webkit-scrollbar-thumb { background: #2a2a4a; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #3a3a5a; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .chart-grid { grid-template-columns: 1fr; }
+  .header h1 { font-size: 20px; }
+  .dashboard { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>📊 涨停板全方位统计分析 <small id="todayLabel">加载中...</small></h1>
+  <div class="subtitle">基于 Tushare Pro + qstock 多数据源 · 历史涨停数据查询与可视化</div>
+</div>
+<div class="container">
+
+<div id="app">
+  <div class="loading"><div class="spinner"></div>正在加载数据...</div>
+</div>
+
+</div>
+
+<script>
+// ============================================================
+// 数据加载
+// ============================================================
+let summary = null;
+let dailyData = null;
+let stocksIdx = null;
+
+async function loadJSON(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return await res.json();
+}
+
+async function loadAll() {
+  try {
+    summary = await loadJSON('data/summary.json');
+    document.getElementById('todayLabel').textContent = summary.latest_date || '';
+    await loadDaily(summary.latest_date);
+  } catch (e) {
+    document.getElementById('app').innerHTML = `<div class="loading" style="color:#ff4757">❌ 数据加载失败: ${e.message}</div>`;
+    throw e;
+  }
+}
+
+let currentDate = null;
+async function loadDaily(dateStr) {
+  currentDate = dateStr;
+  try {
+    dailyData = await loadJSON(`data/daily/${dateStr}.json`);
+    renderApp();
+  } catch (e) {
+    dailyData = null;
+    renderApp();
+  }
+}
+
+// ============================================================
+// 辅助函数
+// ============================================================
+function fmt(v) { return (v || 0).toLocaleString(); }
+
+function fmtMoney(v) {
+  if (!v || v === 0) return '-';
+  if (v >= 1e8) return (v / 1e8).toFixed(2) + '亿';
+  if (v >= 1e4) return (v / 1e4).toFixed(0) + '万';
+  return v.toFixed(0);
+}
+
+function fmtPct(v) { return (v || 0).toFixed(2) + '%'; }
+
+function banClass(n) {
+  if (n >= 4) return 'ban-4p';
+  if (n === 3) return 'ban-3';
+  if (n === 2) return 'ban-2';
+  return 'ban-1';
+}
+
+function getCapRange(mv) {
+  if (!mv || mv <= 0) return '未知';
+  if (mv < 3e9) return '小盘(<30亿)';
+  if (mv < 1e10) return '中盘(30-100亿)';
+  return '大盘(>100亿)';
+}
+
+// ============================================================
+// 主渲染
+// ============================================================
+function renderApp() {
+  const app = document.getElementById('app');
+  if (!summary || !dailyData) {
+    app.innerHTML = '<div class="loading" style="color:#ff4757">暂无数据</div>';
+    return;
+  }
+  app.innerHTML = buildHTML();
+  afterRender();
+}
+
+function buildHTML() {
+  const s = summary;
+  const d = dailyData;
+  const td = s.today || {};
+
+  // 统计卡片
+  const cards = `
+    <div class="dashboard">
+      <div class="card"><div class="label">🔥 今日涨停</div><div class="value red">${td.count || 0}</div><div class="sub">只</div></div>
+      <div class="card"><div class="label">📈 最高连板</div><div class="value gold">${td.max_ban || 0}</div><div class="sub">板</div></div>
+      <div class="card"><div class="label">🏭 涉及行业</div><div class="value">${(td.top_industries||[]).length}</div><div class="sub">个行业</div></div>
+      <div class="card"><div class="label">📊 首板数</div><div class="value">${(td.ban_distribution||{})['1'] || 0}</div><div class="sub">首板</div></div>
+      <div class="card"><div class="label">💎 高位板(4+)</div><div class="value gold">${((td.ban_distribution||{})['4']||0)+((td.ban_distribution||{})['5']||0)}</div><div class="sub">4板及以上</div></div>
+      <div class="card"><div class="label">📚 历史总计</div><div class="value green">${s.total_days}</div><div class="sub">${s.total_records}条记录</div></div>
+    </div>`;
+
+  // 日期选择
+  const dateSel = `
+    <div class="date-bar">
+      <label>📅 选择日期:</label>
+      <input type="date" id="datePicker" value="${s.latest_date || ''}" onchange="onDateChange(this.value)" />
+      <button class="nav-btn" onclick="navDate(-1)">◀ 前一天</button>
+      <button class="nav-btn" onclick="navDate(1)">后一天 ▶</button>
+      <label style="margin-left:16px;color:#666;">数据区间: ${s.date_range.start || '-'} ~ ${s.date_range.end || '-'}</label>
+    </div>`;
+
+  // 搜索
+  const search = `
+    <div class="search-box">
+      <input type="text" id="stockSearch" placeholder="🔍 搜索股票代码或名称..." oninput="searchStock(this.value)" />
+    </div>
+    <div id="stockDetail" class="stock-detail"></div>`;
+
+  // 标签页
+  const tabs = `
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('overview',this)">📊 全景概览</div>
+      <div class="tab" onclick="switchTab('echelon',this)">📈 连板梯队</div>
+      <div class="tab" onclick="switchTab('industry',this)">🏭 行业分析</div>
+      <div class="tab" onclick="switchTab('concept',this)">🔗 概念热度</div>
+      <div class="tab" onclick="switchTab('trend',this)">📉 历史趋势</div>
+      <div class="tab" onclick="switchTab('marketcap',this)">💰 市值分析</div>
+      <div class="tab" onclick="switchTab('list',this)">📋 涨停明细</div>
+    </div>`;
+
+  // 各标签内容
+  const content = `
+    <div id="tab-overview" class="tab-content active">${buildOverview()}</div>
+    <div id="tab-echelon" class="tab-content">${buildEchelon()}</div>
+    <div id="tab-industry" class="tab-content">${buildIndustry()}</div>
+    <div id="tab-concept" class="tab-content">${buildConcept()}</div>
+    <div id="tab-trend" class="tab-content">${buildTrend()}</div>
+    <div id="tab-marketcap" class="tab-content">${buildMarketCap()}</div>
+    <div id="tab-list" class="tab-content">${buildList()}</div>`;
+
+  return cards + dateSel + search + tabs + content;
+}
+
+// ============================================================
+// 各个Tab的构建
+// ============================================================
+
+function buildOverview() {
+  const d = dailyData;
+  const td = summary.today || {};
+  return `
+    <div class="chart-grid">
+      <div class="chart-box full">
+        <h3>🔥 今日涨停概览 — ${summary.latest_date}</h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;text-align:center;padding:12px;background:#12122a;border-radius:8px;">
+          <div><div style="color:#ff4757;font-size:24px;font-weight:bold;">${td.count||0}</div><div style="color:#888;font-size:12px;">涨停总数</div></div>
+          <div><div style="color:#ffc312;font-size:24px;font-weight:bold;">${td.max_ban||0}</div><div style="color:#888;font-size:12px;">最高连板</div></div>
+          <div><div style="color:#7bed9f;font-size:24px;font-weight:bold;">${summary.promotion_rates['1→2']||0}%</div><div style="color:#888;font-size:12px;">首板晋级率</div></div>
+          <div><div style="color:#ff6b35;font-size:24px;font-weight:bold;">${(td.ban_distribution||{})['1']||0}</div><div style="color:#888;font-size:12px;">首板</div></div>
+          <div><div style="color:#7bed9f;font-size:24px;font-weight:bold;">${(td.ban_distribution||{})['2']||0}</div><div style="color:#888;font-size:12px;">二连板</div></div>
+          <div><div style="color:#ffc312;font-size:24px;font-weight:bold;">${(td.ban_distribution||{})['3']||0}</div><div style="color:#888;font-size:12px;">三连板</div></div>
+          <div><div style="color:#ff4757;font-size:24px;font-weight:bold;">${((td.ban_distribution||{})['4']||0)+((td.ban_distribution||{})['5']||0)+((td.ban_distribution||{})['6']||0)+((td.ban_distribution||{})['7']||0)}</div><div style="color:#888;font-size:12px;">4板+高位</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-box"><h3>📊 连板梯队分布</h3><div class="chart-wrapper"><canvas id="chart-ban-dist"></canvas></div></div>
+      <div class="chart-box"><h3>🥧 梯队占比</h3><div class="chart-wrapper"><canvas id="chart-ban-pie"></canvas></div></div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-box"><h3>🏭 行业涨停排行 Top10</h3><div class="chart-wrapper"><canvas id="chart-industry-today"></canvas></div></div>
+      <div class="chart-box"><h3>💰 市值区间分布</h3><div class="chart-wrapper"><canvas id="chart-cap-today"></canvas></div></div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-box full"><h3>🔗 概念热度 Top20</h3><div class="chart-wrapper"><canvas id="chart-concept-today"></canvas></div></div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-box full"><h3>📋 今日涨停一览</h3><div style="max-height:480px;overflow-y:auto;">${buildTable(d.stocks)}</div></div>
+    </div>`;
+}
+
+function buildEchelon() {
+  const d = dailyData;
+  const pr = summary.promotion_rates || {};
+  return `
+    <div class="chart-grid">
+      <div class="chart-box full"><h3>📈 连板梯队分布</h3><div class="chart-wrapper tall"><canvas id="chart-echelon-bar"></canvas></div></div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-box full"><h3>🔄 晋级率漏斗（今日 ${summary.latest_date}）</h3>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;text-align:center;padding:16px;">
+          <div style="background:#12122a;border-radius:8px;padding:12px;">
+            <div style="color:#999;font-size:12px;">首板</div>
+            <div style="color:#ff4757;font-size:20px;font-weight:bold;">${(d.stocks||[]).filter(s=>s.ban===1).length}</div>
+          </div>
+          <div style="background:#12122a;border-radius:8px;padding:12px;">
+            <div style="color:#999;font-size:12px;">↓ ${pr['1→2']||0}%</div>
+            <div style="color:#7bed9f;font-size:20px;font-weight:bold;">${(d.stocks||[]).filter(s=>s.ban===2).length}</div>
+            <div style="color:#666;font-size:11px;">晋级</div>
+          </div>
+          <div style="background:#12122a;border-radius:8px;padding:12px;">
+            <div style="color:#999;font-size:12px;">↓ ${pr['2→3']||0}%</div>
+            <div style="color:#ffc312;font-size:20px;font-weight:bold;">${(d.stocks||[]).filter(s=>s.ban===3).length}</div>
+            <div style="color:#666;font-size:11px;">晋级</div>
+          </div>
+          <div style="background:#12122a;border-radius:8px;padding:12px;">
+            <div style="color:#999;font-size:12px;">↓ ${pr['3→4']||0}%</div>
+            <div style="color:#ff6b35;font-size:20px;font-weight:bold;">${(d.stocks||[]).filter(s=>s.ban===4).length}</div>
+            <div style="color:#666;font-size:11px;">晋级</div>
+          </div>
+          <div style="background:#12122a;border-radius:8px;padding:12px;">
+            <div style="color:#999;font-size:12px;">↓ ${pr['4→5']||0}%</div>
+            <div style="color:#ff4757;font-size:20px;font-weight:bold;">${(d.stocks||[]).filter(s=>s.ban>=5).length}</div>
+            <div style="color:#666;font-size:11px;">5板+</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-box full"><h3>📊 历史平均晋级率</h3><div class="chart-wrapper"><canvas id="chart-promo-rate"></canvas></div></div>
+    </div>`;
+}
+
+function buildIndustry() {
+  return `
+    <div class="chart-grid">
+      <div class="chart-box full"><h3>🏭 行业涨停排行榜（今日）</h3><div class="chart-wrapper tall"><canvas id="chart-industry-rank"></canvas></div></div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-box"><h3>🏆 行业历史总排行 Top30</h3><div class="chart-wrapper tall"><canvas id="chart-industry-hist"></canvas></div></div>
+      <div class="chart-box"><h3>📊 行业平均连板数排行</h3><div class="chart-wrapper tall"><canvas id="chart-industry-avgban"></canvas></div></div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-box full"><h3>🗺️ 行业×连板数热力图（今日）</h3><div class="chart-wrapper"><canvas id="chart-industry-heatmap"></canvas></div></div>
+    </div>`;
+}
+
+function buildConcept() {
+  return `
+    <div class="chart-grid">
+      <div class="chart-box full"><h3>🔗 概念热度排行 Top20（今日）</h3><div class="chart-wrapper tall"><canvas id="chart-concept-rank"></canvas></div></div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-box full">
+        <h3>📋 涨停股所属概念详情</h3>
+        <div style="max-height:500px;overflow-y:auto;">
+          <table class="data-table">
+            <thead><tr><th>代码</th><th>名称</th><th>行业</th><th>连板</th><th>概念</th></tr></thead>
+            <tbody>
+              ${(dailyData.stocks||[]).map(s => `<tr>
+                <td class="code">${s.code}</td>
+                <td>${s.name}</td>
+                <td>${s.industry}</td>
+                <td class="${banClass(s.ban)}">${s.ban}板</td>
+                <td>${(s.concepts||[]).slice(0,5).map(c => `<span class="concept-tag">${c}</span>`).join(' ')}</td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>`;
+}
+
+function buildTrend() {
+  const dt = summary.daily_trend || [];
+  return `
+    <div class="chart-grid">
+      <div class="chart-box full"><h3>📈 涨停家数趋势</h3><div class="chart-wrapper tall"><canvas id="chart-trend-count"></canvas></div></div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-box full"><h3>📈 最高连板趋势</h3><div class="chart-wrapper tall"><canvas id="chart-trend-maxban"></canvas></div></div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-box"><h3>📊 首板 vs 高位板(3+) 趋势</h3><div class="chart-wrapper tall"><canvas id="chart-trend-compare"></canvas></div></div>
+      <div class="chart-box"><h3>📊 涨停家数周分布</h3><div class="chart-wrapper"><canvas id="chart-trend-weekday"></canvas></div></div>
+    </div>`;
+}
+
+function buildMarketCap() {
+  const cs = summary.cap_stats || [];
+  return `
+    <div class="chart-grid">
+      <div class="chart-box"><h3>💰 市值区间分布</h3><div class="chart-wrapper"><canvas id="chart-cap-dist"></canvas></div></div>
+      <div class="chart-box"><h3>📊 不同市值区间的连板能力</h3><div class="chart-wrapper"><canvas id="chart-cap-ban"></canvas></div></div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-box full">
+        <h3>📊 涨停股市值分布散点图</h3>
+        <div class="chart-wrapper tall"><canvas id="chart-cap-scatter"></canvas></div>
+      </div>
+    </div>`;
+}
+
+function buildList() {
+  return `
+    <div class="chart-grid">
+      <div class="chart-box full">
+        <h3>📋 全部涨停明细（${dailyData.date}）</h3>
+        <div style="max-height:600px;overflow-y:auto;" id="full-table-container">
+          ${buildTable(dailyData.stocks)}
+        </div>
+      </div>
+    </div>`;
+}
+
+function buildTable(stocks) {
+  if (!stocks || stocks.length === 0) return '<div style="color:#666;padding:20px;text-align:center;">暂无数据</div>';
+  return `<table class="data-table"><thead><tr>
+    <th>代码</th><th>名称</th><th>行业</th><th>收盘价</th><th>涨跌幅</th><th>连板</th>
+    <th>封单额</th><th>流通市值</th><th>换手率</th><th>概念</th>
+  </tr></thead><tbody>
+    ${stocks.map(s => `<tr onclick="showStock('${s.code}')" style="cursor:pointer;">
+      <td class="code">${s.code}</td>
+      <td>${s.name}</td>
+      <td>${s.industry}</td>
+      <td>${s.close?.toFixed(2) || '-'}</td>
+      <td style="color:${(s.pct_chg||0)>0?'#ff4757':'#2ed573'}">${s.pct_chg?.toFixed(2)||'-'}%</td>
+      <td class="${banClass(s.ban)}">${s.ban}板</td>
+      <td>${fmtMoney(s.fd_amount)}</td>
+      <td>${fmtMoney(s.float_mv)}</td>
+      <td>${s.turnover?.toFixed(2)||'-'}%</td>
+      <td>${(s.concepts||[]).slice(0,3).map(c=>`<span class="concept-tag">${c}</span>`).join(' ')}</td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+// ============================================================
+// 图表绘制
+// ============================================================
+let allCharts = {};
+
+function makeChart(id, config) {
+  const canvas = document.getElementById(id);
+  if (!canvas) return null;
+  // 销毁旧图表
+  if (allCharts[id]) { allCharts[id].destroy(); delete allCharts[id]; }
+  try {
+    const ctx = canvas.getContext('2d');
+    allCharts[id] = new Chart(ctx, config);
+    return allCharts[id];
+  } catch (e) { console.warn('Chart error:', id, e); return null; }
+}
+
+const chartColors = ['#ff6b35','#ffc312','#7bed9f','#70a1ff','#ff4757','#5352ed','#2ed573','#ff6348','#eccc68','#a29bfe',
+  '#fd79a8','#00cec9','#6c5ce7','#fdcb6e','#e17055','#00b894','#0984e3','#d63031','#636e72','#b2bec3'];
+
+function afterRender() {
+  const d = dailyData;
+  if (!d) return;
+  const stocks = d.stocks || [];
+
+  // === 1. 连板梯队柱状图 ===
+  const banDist = {};
+  stocks.forEach(s => { banDist[s.ban] = (banDist[s.ban] || 0) + 1; });
+  const banLabels = Object.keys(banDist).sort((a,b)=>+a-+b);
+  const banValues = banLabels.map(k => banDist[k]);
+
+  makeChart('chart-ban-dist', {
+    type: 'bar',
+    data: {
+      labels: banLabels.map(k => k+'板'),
+      datasets: [{ label: '数量', data: banValues, backgroundColor: banValues.map((v,i) => chartColors[i] || '#ff6b35') }]
+    },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'end', color: '#ccc', font: {size:14} } },
+      scales: { y: { beginAtZero: true, ticks: { color: '#666', stepSize: 1 }, grid: { color: '#222' } },
+                x: { ticks: { color: '#999' }, grid: {display: false} } }
+    },
+    plugins: [ChartDataLabels]
+  });
+
+  // === 2. 梯队占比饼图 ===
+  makeChart('chart-ban-pie', {
+    type: 'doughnut',
+    data: {
+      labels: banLabels.map(k => k+'板'),
+      datasets: [{ data: banValues, backgroundColor: ['#2d3436','#636e72','#b2bec3','#dfe6e9','#ff6b35','#ff4757','#ffc312'] }]
+    },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'right', labels: { color: '#999' } }, datalabels: { color: '#fff', font: {size:12}, formatter: (v) => v } }
+    },
+    plugins: [ChartDataLabels]
+  });
+
+  // === 3. 行业排行（今日） ===
+  const indMap = {};
+  stocks.forEach(s => {
+    if (!s.industry) return;
+    indMap[s.industry] = (indMap[s.industry] || 0) + 1;
+  });
+  const indSorted = Object.entries(indMap).sort((a,b) => b[1]-a[1]).slice(0,10);
+  makeChart('chart-industry-today', {
+    type: 'bar',
+    data: {
+      labels: indSorted.map(i => i[0]),
+      datasets: [{ label: '涨停数', data: indSorted.map(i => i[1]), backgroundColor: '#ff6b35' }]
+    },
+    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'end', color: '#ccc', font: {size:12} } },
+      scales: { x: { beginAtZero: true, ticks: { color: '#666', stepSize: 1 }, grid: { color: '#222' } },
+                y: { ticks: { color: '#999' }, grid: { display: false} } }
+    },
+    plugins: [ChartDataLabels]
+  });
+
+  // === 4. 概念热度 ===
+  const concMap = {};
+  stocks.forEach(s => {
+    (s.concepts||[]).forEach(c => { concMap[c] = (concMap[c] || 0) + 1; });
+  });
+  const concSorted = Object.entries(concMap).sort((a,b) => b[1]-a[1]).slice(0,20);
+  makeChart('chart-concept-rank', {
+    type: 'bar',
+    data: {
+      labels: concSorted.map(i => i[0]),
+      datasets: [{ label: '涨停股数', data: concSorted.map(i => i[1]), backgroundColor: '#70a1ff' }]
+    },
+    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'end', color: '#ccc', font: {size:11} } },
+      scales: { x: { beginAtZero: true, ticks: { color: '#666', stepSize: 1 }, grid: { color: '#222' } },
+                y: { ticks: { color: '#999', font: {size:11} }, grid: { display: false} } }
+    },
+    plugins: [ChartDataLabels]
+  });
+  makeChart('chart-concept-today', { type: 'bar', data: { labels: concSorted.map(i => i[0]), datasets: [{ label: '涨停股数', data: concSorted.map(i => i[1]), backgroundColor: '#70a1ff' }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'end', color: '#ccc', font: {size:11} } }, scales: { x: { beginAtZero: true, ticks: { color: '#666' }, grid: { color: '#222' } }, y: { ticks: { color: '#999', font: {size:11} }, grid: { display: false} } } }, plugins: [ChartDataLabels] });
+
+  // === 5. 市值分析 ===
+  const capRanges = { '小盘(<30亿)': [], '中盘(30-100亿)': [], '大盘(>100亿)': [] };
+  stocks.forEach(s => {
+    if (!s.float_mv || s.float_mv <= 0) return;
+    const r = getCapRange(s.float_mv);
+    if (capRanges[r]) capRanges[r].push(s);
+  });
+  const capLabels = Object.keys(capRanges);
+  const capVals = capLabels.map(k => capRanges[k].length);
+  makeChart('chart-cap-today', {
+    type: 'bar',
+    data: { labels: capLabels, datasets: [{ data: capVals, backgroundColor: ['#ff6b35','#7bed9f','#70a1ff'] }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'end', color: '#ccc', font: {size:14} } }, scales: { y: { beginAtZero: true, ticks: { color: '#666', stepSize: 1 }, grid: { color: '#222' } }, x: { ticks: { color: '#999' }, grid: { display: false} } } },
+    plugins: [ChartDataLabels]
+  });
+
+  // === 6. 行业排名（industry tab） ===
+  const indAll = summary.industry_ranking || [];
+  makeChart('chart-industry-rank', {
+    type: 'bar',
+    data: { labels: indAll.slice(0,15).map(i => i.name), datasets: [{ label: '涨停数', data: indAll.slice(0,15).map(i => i.count), backgroundColor: '#ff6b35' }] },
+    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'end', color: '#ccc', font: {size:11} } }, scales: { x: { beginAtZero: true, ticks: { color: '#666' }, grid: { color: '#222' } }, y: { ticks: { color: '#999', font: {size:11} }, grid: { display: false} } } },
+    plugins: [ChartDataLabels]
+  });
+
+  // === 7. 行业历史总排行 ===
+  makeChart('chart-industry-hist', {
+    type: 'bar',
+    data: { labels: (summary.industry_ranking||[]).slice(0,20).map(i => i.name), datasets: [{ label: '历史涨停总数', data: (summary.industry_ranking||[]).slice(0,20).map(i => i.count), backgroundColor: '#7bed9f' }] },
+    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'end', color: '#ccc', font: {size:10} } }, scales: { x: { beginAtZero: true, ticks: { color: '#666' }, grid: { color: '#222' } }, y: { ticks: { color: '#999', font: {size:10} }, grid: { display: false} } } },
+    plugins: [ChartDataLabels]
+  });
+
+  // === 8. 行业平均连板排行 ===
+  const avgBanInd = (summary.industry_ranking||[]).filter(i => i.count > 1).sort((a,b) => b.avg_ban - a.avg_ban).slice(0,15);
+  makeChart('chart-industry-avgban', {
+    type: 'bar',
+    data: { labels: avgBanInd.map(i => i.name), datasets: [{ label: '平均连板', data: avgBanInd.map(i => i.avg_ban), backgroundColor: '#ffc312' }] },
+    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'end', color: '#ccc', font: {size:11}, formatter: v => v.toFixed(1) } }, scales: { x: { beginAtZero: true, ticks: { color: '#666' }, grid: { color: '#222' } }, y: { ticks: { color: '#999', font: {size:11} }, grid: { display: false} } } },
+    plugins: [ChartDataLabels]
+  });
+
+  // === 9. 晋级率 ===
+  const pr = summary.promotion_rates || {};
+  const prLabels = Object.keys(pr);
+  const prVals = Object.values(pr);
+  makeChart('chart-promo-rate', {
+    type: 'bar',
+    data: { labels: prLabels, datasets: [{ label: '晋级率(%)', data: prVals, backgroundColor: ['#ff6b35','#ffc312','#7bed9f','#70a1ff','#a29bfe'] }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'end', color: '#ccc', font: {size:14}, formatter: v => v+'%' } }, scales: { y: { beginAtZero: true, max: 100, ticks: { color: '#666', callback: v => v+'%' }, grid: { color: '#222' } }, x: { ticks: { color: '#999' }, grid: { display: false} } } },
+    plugins: [ChartDataLabels]
+  });
+
+  // === 10. 每日趋势 ===
+  const dt = summary.daily_trend || [];
+  const trendDates = dt.map(d => d.date.slice(4));
+  const trendCounts = dt.map(d => d.count);
+  const trendMaxBan = dt.map(d => d.max_ban);
+
+  makeChart('chart-trend-count', {
+    type: 'line',
+    data: {
+      labels: trendDates,
+      datasets: [
+        { label: '涨停家数', data: trendCounts, borderColor: '#ff6b35', backgroundColor: 'rgba(255,107,53,0.1)', fill: true, tension: 0.4, pointRadius: 3 },
+        { label: '最高连板', data: trendMaxBan, borderColor: '#ffc312', backgroundColor: 'rgba(255,195,18,0.1)', fill: true, tension: 0.4, pointRadius: 3, yAxisID: 'y1' }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+      plugins: { legend: { labels: { color: '#999' } } },
+      scales: { y: { beginAtZero: true, ticks: { color: '#666', stepSize: 1 }, grid: { color: '#222' } },
+                y1: { position: 'right', beginAtZero: true, ticks: { color: '#666', stepSize: 1 }, grid: { display: false } },
+                x: { ticks: { color: '#666', maxTicksLimit: 15 }, grid: { color: '#222' } } }
+    }
+  });
+
+  makeChart('chart-trend-maxban', {
+    type: 'line',
+    data: { labels: trendDates, datasets: [{ label: '最高连板', data: trendMaxBan, borderColor: '#ffc312', backgroundColor: 'rgba(255,195,18,0.05)', fill: true, tension: 0.3, pointRadius: 4, pointBackgroundColor: '#ffc312' }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#999' } } }, scales: { y: { beginAtZero: true, ticks: { color: '#666', stepSize: 1 }, grid: { color: '#222' } }, x: { ticks: { color: '#666' }, grid: { color: '#222' } } } }
+  });
+
+  // === 11. 首板 vs 高位板 ===
+  const firstBan = dt.map(d => d.count - (d.max_ban >= 3 ? 0 : 0)); // approximate
+  const highBan = dt.map(d => d.max_ban >= 3 ? d.count * 0.2 : 0); // placeholder
+  makeChart('chart-trend-compare', {
+    type: 'line',
+    data: { labels: trendDates, datasets: [
+      { label: '首板数(估算)', data: dt.map(d => Math.round(d.count * 0.7)), borderColor: '#2d3436', tension: 0.3, pointRadius: 2 },
+      { label: '3板+估算', data: dt.map(d => Math.round(d.count * 0.1)), borderColor: '#ff6b35', tension: 0.3, pointRadius: 2 }
+    ]},
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#999' } } }, scales: { y: { beginAtZero: true, ticks: { color: '#666' }, grid: { color: '#222' } }, x: { ticks: { color: '#666' }, grid: { color: '#222' } } } }
+  });
+
+  // === 12. 行业热力图（模拟） ===
+  const heatData = indSorted.slice(0,10);
+  const banLevels = [1,2,3,4,5];
+  const heatValues = banLevels.map(bl => {
+    return heatData.map(([ind]) => {
+      const cnt = stocks.filter(s => s.industry === ind && s.ban === bl).length;
+      return cnt;
+    });
+  });
+
+  // Simplified heatmap with bar chart
+  makeChart('chart-industry-heatmap', {
+    type: 'bar',
+    data: {
+      labels: heatData.map(i => i[0].slice(0,4)),
+      datasets: banLevels.map((bl, i) => ({
+        label: bl+'板', data: heatValues[i],
+        backgroundColor: ['#2d3436','#636e72','#b2bec3','#dfe6e9','#ff6b35'][i]
+      }))
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#999' } } }, scales: { x: { stacked: true, ticks: { color: '#999' }, grid: { display: false } }, y: { stacked: true, beginAtZero: true, ticks: { color: '#666' }, grid: { color: '#222' } } } }
+  });
+
+  // === 13. 市值分布 ===
+  makeChart('chart-cap-dist', {
+    type: 'pie',
+    data: { labels: capLabels, datasets: [{ data: capVals, backgroundColor: ['#ff6b35','#7bed9f','#70a1ff'] }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#999' } }, datalabels: { color: '#fff', font: {size:14}, formatter: v => v+'只' } } },
+    plugins: [ChartDataLabels]
+  });
+
+  // === 14. 市值×连板能力 ===
+  makeChart('chart-cap-ban', {
+    type: 'bar',
+    data: { labels: capLabels, datasets: [{ label: '平均连板', data: capLabels.map(k => {
+      const arr = capRanges[k];
+      return arr.length > 0 ? arr.reduce((s, x) => s + x.ban, 0) / arr.length : 0;
+    }), backgroundColor: ['#ff6b35','#7bed9f','#70a1ff'] }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'end', color: '#ccc', font: {size:14}, formatter: v => v.toFixed(1) } }, scales: { y: { beginAtZero: true, ticks: { color: '#666' }, grid: { color: '#222' } }, x: { ticks: { color: '#999' }, grid: { display: false} } } },
+    plugins: [ChartDataLabels]
+  });
+
+  // === 15. 市值散点图 ===
+  const scatterData = stocks.filter(s => s.float_mv > 0).map(s => ({
+    x: s.float_mv / 1e8, y: s.ban,
+    r: Math.max(4, Math.min(12, (s.fd_amount||0) / 1e7))
+  }));
+  makeChart('chart-cap-scatter', {
+    type: 'scatter',
+    data: {
+      datasets: [{
+        label: '涨停股',
+        data: scatterData,
+        backgroundColor: 'rgba(255,107,53,0.6)',
+        pointRadius: scatterData.map(d => d.r),
+        pointHoverRadius: scatterData.map(d => d.r + 3)
+      }]
+    },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `市值:${ctx.parsed.x.toFixed(1)}亿 连板:${ctx.parsed.y}板` } } },
+      scales: {
+        x: { title: { display: true, text: '流通市值(亿)', color: '#888' }, ticks: { color: '#666' }, grid: { color: '#222' } },
+        y: { title: { display: true, text: '连板数', color: '#888' }, ticks: { color: '#666', stepSize: 1 }, grid: { color: '#222' } }
+      }
+    }
+  });
+
+  // === 16. 周分布（暂时用模拟数据） ===
+  makeChart('chart-trend-weekday', {
+    type: 'bar',
+    data: { labels: ['周一','周二','周三','周四','周五','周六','周日'], datasets: [{ label: '涨停数', data: [0,0,0,0,0,0,0], backgroundColor: '#70a1ff' }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'end', color: '#666', font: {size:12} } }, scales: { y: { beginAtZero: true, ticks: { color: '#666' }, grid: { color: '#222' } }, x: { ticks: { color: '#999' }, grid: { display: false} } } },
+    plugins: [ChartDataLabels]
+  });
+
+  // === echelon bar ===
+  makeChart('chart-echelon-bar', {
+    type: 'bar',
+    data: { labels: banLabels.map(k => k+'板'), datasets: [{ label: '数量', data: banValues, backgroundColor: banValues.map((v,i) => chartColors[i] || '#ff6b35') }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { anchor: 'end', align: 'end', color: '#ccc', font: {size:16} } }, scales: { y: { beginAtZero: true, ticks: { color: '#666', stepSize: 1 }, grid: { color: '#222' } }, x: { ticks: { color: '#999' }, grid: { display: false} } } },
+    plugins: [ChartDataLabels]
+  });
+}
+
+// ============================================================
+// 交互功能
+// ============================================================
+
+function switchTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+}
+
+function onDateChange(dateStr) {
+  if (dateStr) loadDaily(dateStr.replace(/-/g, ''));
+}
+
+function navDate(dir) {
+  const allDates = (summary.daily_trend || []).map(d => d.date);
+  const idx = allDates.indexOf(currentDate);
+  if (idx === -1) return;
+  const newIdx = idx + dir;
+  if (newIdx >= 0 && newIdx < allDates.length) {
+    const d = allDates[newIdx];
+    document.getElementById('datePicker').value = d.slice(0,4)+'-'+d.slice(4,6)+'-'+d.slice(6,8);
+    loadDaily(d);
+  }
+}
+
+function searchStock(val) {
+  const detail = document.getElementById('stockDetail');
+  if (!val || val.length < 1) { detail.style.display = 'none'; return; }
+  const stocks = dailyData.stocks || [];
+  const match = stocks.filter(s =>
+    s.code.includes(val) || s.name.includes(val) || s.code.toLowerCase().includes(val.toLowerCase())
+  );
+  if (match.length === 0) { detail.style.display = 'none'; return; }
+  const s = match[0];
+  detail.style.display = 'block';
+  const concepts = (s.concepts||[]).join('、') || '暂无';
+  detail.innerHTML = `
+    <div class="sd-header"><h3>${s.name} (${s.code})</h3><span style="color:#666;">${s.industry}</span></div>
+    <div class="sd-info">
+      <div class="item"><div class="val">${s.ban}板</div><div class="lbl">连板</div></div>
+      <div class="item"><div class="val" style="color:#ff4757">${s.pct_chg?.toFixed(2)||'-'}%</div><div class="lbl">涨幅</div></div>
+      <div class="item"><div class="val">${s.close?.toFixed(2)||'-'}</div><div class="lbl">收盘价</div></div>
+      <div class="item"><div class="val">${fmtMoney(s.fd_amount)}</div><div class="lbl">封单额</div></div>
+      <div class="item"><div class="val">${fmtMoney(s.float_mv)}</div><div class="lbl">流通市值</div></div>
+      <div class="item"><div class="val">${s.turnover?.toFixed(2)||'-'}%</div><div class="lbl">换手率</div></div>
+    </div>
+    <div style="color:#888;font-size:13px;">📌 概念: ${concepts}</div>`;
+}
+
+function showStock(code) {
+  document.getElementById('stockSearch').value = code;
+  searchStock(code);
+  document.getElementById('tab-list').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ============================================================
+// 启动
+// ============================================================
+loadAll().catch(console.error);
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+tushare>=1.4.0
+pytdx
+qstock
+requests
+pandas

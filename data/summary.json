@@ -1,0 +1,339 @@
+{
+  "total_records": 90,
+  "total_days": 1,
+  "total_stocks": 90,
+  "total_industries": 44,
+  "latest_date": "20260519",
+  "date_range": {
+    "start": "20260519",
+    "end": "20260519"
+  },
+  "today": {
+    "count": 90,
+    "ban_distribution": {
+      "1": 71,
+      "2": 14,
+      "3": 2,
+      "4": 1,
+      "5": 1,
+      "7": 1
+    },
+    "max_ban": 7,
+    "top_industries": [
+      {
+        "name": "电力",
+        "count": 8
+      },
+      {
+        "name": "元件",
+        "count": 8
+      },
+      {
+        "name": "通用设备",
+        "count": 5
+      },
+      {
+        "name": "IT服务Ⅱ",
+        "count": 5
+      },
+      {
+        "name": "通信设备",
+        "count": 4
+      },
+      {
+        "name": "光学光电",
+        "count": 4
+      },
+      {
+        "name": "电网设备",
+        "count": 3
+      },
+      {
+        "name": "半导体",
+        "count": 3
+      },
+      {
+        "name": "化学制品",
+        "count": 3
+      },
+      {
+        "name": "通信服务",
+        "count": 2
+      }
+    ]
+  },
+  "ban_distribution": {
+    "1": 71,
+    "2": 14,
+    "3": 2,
+    "4": 1,
+    "5": 1,
+    "7": 1
+  },
+  "promotion_rates": {
+    "1→2": 0,
+    "2→3": 0,
+    "3→4": 0,
+    "4→5": 0,
+    "5→6": 0
+  },
+  "daily_trend": [
+    {
+      "date": "20260519",
+      "count": 90,
+      "max_ban": 7
+    }
+  ],
+  "industry_ranking": [
+    {
+      "name": "元件",
+      "count": 8,
+      "avg_ban": 1.5
+    },
+    {
+      "name": "电力",
+      "count": 8,
+      "avg_ban": 1.0
+    },
+    {
+      "name": "IT服务Ⅱ",
+      "count": 5,
+      "avg_ban": 1.6
+    },
+    {
+      "name": "通用设备",
+      "count": 5,
+      "avg_ban": 1.2
+    },
+    {
+      "name": "光学光电",
+      "count": 4,
+      "avg_ban": 1.25
+    },
+    {
+      "name": "通信设备",
+      "count": 4,
+      "avg_ban": 1.0
+    },
+    {
+      "name": "化学制品",
+      "count": 3,
+      "avg_ban": 1.0
+    },
+    {
+      "name": "半导体",
+      "count": 3,
+      "avg_ban": 1.0
+    },
+    {
+      "name": "电网设备",
+      "count": 3,
+      "avg_ban": 1.0
+    },
+    {
+      "name": "专业工程",
+      "count": 2,
+      "avg_ban": 1.0
+    },
+    {
+      "name": "其他电子",
+      "count": 2,
+      "avg_ban": 1.0
+    },
+    {
+      "name": "化学原料",
+      "count": 2,
+      "avg_ban": 1.5
+    },
+    {
+      "name": "医疗服务",
+      "count": 2,
+      "avg_ban": 1.0
+    },
+    {
+      "name": "家居用品",
+      "count": 2,
+      "avg_ban": 1.0
+    },
+    {
+      "name": "房地产开",
+      "count": 2,
+      "avg_ban": 1.5
+    },
+    {
+      "name": "汽车零部",
+      "count": 2,
+      "avg_ban": 1.0
+    },
+    {
+      "name": "消费电子",
+      "count": 2,
+      "avg_ban": 1.0
+    },
+    {
+      "name": "电视广播",
+      "count": 2,
+      "avg_ban": 1.0
+    },
+    {
+      "name": "自动化设",
+      "count": 2,
+      "avg_ban": 2.5
+    },
+    {
+      "name": "软件开发",
+      "count": 2,
+      "avg_ban": 1.0
+    },
+    {
+      "name": "通信服务",
+      "count": 2,
+      "avg_ban": 1.5
+    },
+    {
+      "name": "一般零售",
+      "count": 1,
+      "avg_ban": 2.0
+    },
+    {
+      "name": "专用设备",
+      "count": 1,
+      "avg_ban": 1.0
+    },
+    {
+      "name": "光伏设备",
+      "count": 1,
+      "avg_ban": 1.0
+    },
+    {
+      "name": "出版",
+      "count": 1,
+      "avg_ban": 1.0
+    },
+    {
+      "name": "包装印刷",
+      "count": 1,
+      "avg_ban": 1.0
+    },
+    {
+      "name": "基础建设",
+      "count": 1,
+      "avg_ban": 2.0
+    },
+    {
+      "name": "塑料",
+      "count": 1,
+      "avg_ban": 1.0
+    },
+    {
+      "name": "家电零部",
+      "count": 1,
+      "avg_ban": 3.0
+    },
+    {
+      "name": "小家电",
+      "count": 1,
+      "avg_ban": 7.0
+    }
+  ],
+  "concept_ranking": [
+    {
+      "name": "标普道琼斯A股",
+      "count": 19
+    },
+    {
+      "name": "深股通",
+      "count": 14
+    },
+    {
+      "name": "华为概念",
+      "count": 14
+    },
+    {
+      "name": "转融券标的",
+      "count": 13
+    },
+    {
+      "name": "融资融券",
+      "count": 13
+    },
+    {
+      "name": "融资标的股",
+      "count": 12
+    },
+    {
+      "name": "融券标的股",
+      "count": 12
+    },
+    {
+      "name": "沪股通",
+      "count": 12
+    },
+    {
+      "name": "年报预增",
+      "count": 9
+    },
+    {
+      "name": "军工",
+      "count": 9
+    },
+    {
+      "name": "机构重仓",
+      "count": 8
+    },
+    {
+      "name": "电力改革",
+      "count": 7
+    },
+    {
+      "name": "新股与次新股",
+      "count": 7
+    },
+    {
+      "name": "数据中心",
+      "count": 7
+    },
+    {
+      "name": "大数据",
+      "count": 7
+    },
+    {
+      "name": "光伏概念",
+      "count": 7
+    },
+    {
+      "name": "风电",
+      "count": 6
+    },
+    {
+      "name": "新能源",
+      "count": 6
+    },
+    {
+      "name": "云计算",
+      "count": 6
+    },
+    {
+      "name": "独角兽概念",
+      "count": 5
+    }
+  ],
+  "cap_stats": [
+    {
+      "range": "中盘(30-100亿)",
+      "count": 46,
+      "avg_ban": 1.46
+    },
+    {
+      "range": "大盘(>100亿)",
+      "count": 40,
+      "avg_ban": 1.18
+    },
+    {
+      "range": "小盘(<30亿)",
+      "count": 4,
+      "avg_ban": 1.75
+    }
+  ],
+  "updated_at": "2026-05-19 15:51:29"
+}

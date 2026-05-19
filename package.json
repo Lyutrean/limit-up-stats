@@ -1,0 +1,8 @@
+{
+  "name": "limit-up-stats",
+  "version": "1.0.0",
+  "description": "A股涨停板全方位统计分析工具",
+  "scripts": {
+    "build": "echo 'Static site - no build needed'"
+  }
+}

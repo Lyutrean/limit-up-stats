@@ -1,0 +1,722 @@
+[
+  {
+    "code": "000026.SZ",
+    "name": "飞亚达",
+    "industry": "饰品",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "000417.SZ",
+    "name": "合百集团",
+    "industry": "一般零售",
+    "total_zt": 1,
+    "max_ban": 2,
+    "avg_ban": 2.0
+  },
+  {
+    "code": "000586.SZ",
+    "name": "汇源通信",
+    "industry": "通信设备",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "000600.SZ",
+    "name": "建投能源",
+    "industry": "电力",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "000636.SZ",
+    "name": "风华高科",
+    "industry": "元件",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "000811.SZ",
+    "name": "冰轮环境",
+    "industry": "通用设备",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "000899.SZ",
+    "name": "赣能股份",
+    "industry": "电力",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "000910.SZ",
+    "name": "大亚圣象",
+    "industry": "家居用品",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "001259.SZ",
+    "name": "利仁科技",
+    "industry": "小家电",
+    "total_zt": 1,
+    "max_ban": 7,
+    "avg_ban": 7.0
+  },
+  {
+    "code": "001326.SZ",
+    "name": "联域股份",
+    "industry": "照明设备",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "001896.SZ",
+    "name": "豫能控股",
+    "industry": "电力",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "002067.SZ",
+    "name": "景兴纸业",
+    "industry": "造纸",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "002123.SZ",
+    "name": "梦网科技",
+    "industry": "通信服务",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "002135.SZ",
+    "name": "东南网架",
+    "industry": "专业工程",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "002150.SZ",
+    "name": "正泰电源",
+    "industry": "通用设备",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "002173.SZ",
+    "name": "创新医疗",
+    "industry": "医疗服务",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "002178.SZ",
+    "name": "延华智能",
+    "industry": "软件开发",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "002208.SZ",
+    "name": "合肥城建",
+    "industry": "房地产开",
+    "total_zt": 1,
+    "max_ban": 2,
+    "avg_ban": 2.0
+  },
+  {
+    "code": "002226.SZ",
+    "name": "江南化工",
+    "industry": "化学制品",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "002246.SZ",
+    "name": "北化股份",
+    "industry": "化学制品",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "002272.SZ",
+    "name": "川润股份",
+    "industry": "通用设备",
+    "total_zt": 1,
+    "max_ban": 2,
+    "avg_ban": 2.0
+  },
+  {
+    "code": "002281.SZ",
+    "name": "光迅科技",
+    "industry": "通信设备",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "002375.SZ",
+    "name": "亚厦股份",
+    "industry": "装修装饰",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "002421.SZ",
+    "name": "达实智能",
+    "industry": "IT服务Ⅱ",
+    "total_zt": 1,
+    "max_ban": 3,
+    "avg_ban": 3.0
+  },
+  {
+    "code": "002484.SZ",
+    "name": "江海股份",
+    "industry": "元件",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "002552.SZ",
+    "name": "宝鼎科技",
+    "industry": "元件",
+    "total_zt": 1,
+    "max_ban": 2,
+    "avg_ban": 2.0
+  },
+  {
+    "code": "002782.SZ",
+    "name": "可立克",
+    "industry": "其他电子",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "002831.SZ",
+    "name": "裕同科技",
+    "industry": "包装印刷",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "002845.SZ",
+    "name": "同兴达",
+    "industry": "光学光电",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "002893.SZ",
+    "name": "京能热力",
+    "industry": "电力",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "002988.SZ",
+    "name": "豪美新材",
+    "industry": "工业金属",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "300608.SZ",
+    "name": "思特奇",
+    "industry": "软件开发",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "300616.SZ",
+    "name": "尚品宅配",
+    "industry": "家居用品",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "300632.SZ",
+    "name": "光莆股份",
+    "industry": "光学光电",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "300634.SZ",
+    "name": "彩讯股份",
+    "industry": "IT服务Ⅱ",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "300657.SZ",
+    "name": "弘信电子",
+    "industry": "元件",
+    "total_zt": 1,
+    "max_ban": 2,
+    "avg_ban": 2.0
+  },
+  {
+    "code": "301120.SZ",
+    "name": "新特电气",
+    "industry": "电网设备",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "301176.SZ",
+    "name": "逸豪新材",
+    "industry": "元件",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "301379.SZ",
+    "name": "天山电子",
+    "industry": "光学光电",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "600021.SH",
+    "name": "上海电力",
+    "industry": "电力",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "600186.SH",
+    "name": "莲花控股",
+    "industry": "调味发酵",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "600246.SH",
+    "name": "万通发展",
+    "industry": "房地产开",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "600310.SH",
+    "name": "广西能源",
+    "industry": "电力",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "600353.SH",
+    "name": "旭光电子",
+    "industry": "其他电子",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "600452.SH",
+    "name": "涪陵电力",
+    "industry": "电力",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "600481.SH",
+    "name": "双良节能",
+    "industry": "光伏设备",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "600506.SH",
+    "name": "统一股份",
+    "industry": "炼化及贸",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "600563.SH",
+    "name": "法拉电子",
+    "industry": "元件",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "600626.SH",
+    "name": "申达股份",
+    "industry": "汽车零部",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "600758.SH",
+    "name": "辽宁能源",
+    "industry": "煤炭开采",
+    "total_zt": 1,
+    "max_ban": 2,
+    "avg_ban": 2.0
+  },
+  {
+    "code": "600831.SH",
+    "name": "广电网络",
+    "industry": "电视广播",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "600835.SH",
+    "name": "上海机电",
+    "industry": "专用设备",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "600850.SH",
+    "name": "电科数字",
+    "industry": "IT服务Ⅱ",
+    "total_zt": 1,
+    "max_ban": 2,
+    "avg_ban": 2.0
+  },
+  {
+    "code": "600863.SH",
+    "name": "华能蒙电",
+    "industry": "电力",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "600903.SH",
+    "name": "贵州燃气",
+    "industry": "燃气Ⅱ",
+    "total_zt": 1,
+    "max_ban": 2,
+    "avg_ban": 2.0
+  },
+  {
+    "code": "600936.SH",
+    "name": "北投科技",
+    "industry": "IT服务Ⅱ",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "601222.SH",
+    "name": "林洋能源",
+    "industry": "电网设备",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "601929.SH",
+    "name": "吉视传媒",
+    "industry": "电视广播",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "603067.SH",
+    "name": "振华股份",
+    "industry": "化学原料",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "603082.SH",
+    "name": "北自科技",
+    "industry": "自动化设",
+    "total_zt": 1,
+    "max_ban": 4,
+    "avg_ban": 4.0
+  },
+  {
+    "code": "603083.SH",
+    "name": "XD剑桥科",
+    "industry": "通信设备",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "603108.SH",
+    "name": "润达医疗",
+    "industry": "医疗服务",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "603115.SH",
+    "name": "海星股份",
+    "industry": "元件",
+    "total_zt": 1,
+    "max_ban": 2,
+    "avg_ban": 2.0
+  },
+  {
+    "code": "603163.SH",
+    "name": "圣晖集成",
+    "industry": "专业工程",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "603178.SH",
+    "name": "圣龙股份",
+    "industry": "汽车零部",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "603206.SH",
+    "name": "嘉环科技",
+    "industry": "通信服务",
+    "total_zt": 1,
+    "max_ban": 2,
+    "avg_ban": 2.0
+  },
+  {
+    "code": "603311.SH",
+    "name": "金海高科",
+    "industry": "家电零部",
+    "total_zt": 1,
+    "max_ban": 3,
+    "avg_ban": 3.0
+  },
+  {
+    "code": "603316.SH",
+    "name": "诚邦股份",
+    "industry": "基础建设",
+    "total_zt": 1,
+    "max_ban": 2,
+    "avg_ban": 2.0
+  },
+  {
+    "code": "603333.SH",
+    "name": "尚纬股份",
+    "industry": "电网设备",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "603380.SH",
+    "name": "易德龙",
+    "industry": "消费电子",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "603466.SH",
+    "name": "风语筑",
+    "industry": "数字媒体",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "603608.SH",
+    "name": "天创时尚",
+    "industry": "服装家纺",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "603636.SH",
+    "name": "南威软件",
+    "industry": "IT服务Ⅱ",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "603727.SH",
+    "name": "博迈科",
+    "industry": "油服工程",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "603779.SH",
+    "name": "威龙股份",
+    "industry": "非白酒",
+    "total_zt": 1,
+    "max_ban": 5,
+    "avg_ban": 5.0
+  },
+  {
+    "code": "603823.SH",
+    "name": "百合花",
+    "industry": "化学制品",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "603938.SH",
+    "name": "三孚股份",
+    "industry": "化学原料",
+    "total_zt": 1,
+    "max_ban": 2,
+    "avg_ban": 2.0
+  },
+  {
+    "code": "603989.SH",
+    "name": "艾华集团",
+    "industry": "元件",
+    "total_zt": 1,
+    "max_ban": 2,
+    "avg_ban": 2.0
+  },
+  {
+    "code": "603999.SH",
+    "name": "读者传媒",
+    "industry": "出版",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "605218.SH",
+    "name": "伟时电子",
+    "industry": "光学光电",
+    "total_zt": 1,
+    "max_ban": 2,
+    "avg_ban": 2.0
+  },
+  {
+    "code": "605288.SH",
+    "name": "凯迪股份",
+    "industry": "自动化设",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "605358.SH",
+    "name": "立昂微",
+    "industry": "半导体",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "605376.SH",
+    "name": "博迁新材",
+    "industry": "金属新材",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "605488.SH",
+    "name": "福莱新材",
+    "industry": "塑料",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "688126.SH",
+    "name": "沪硅产业",
+    "industry": "半导体",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "688182.SH",
+    "name": "灿勤科技",
+    "industry": "通信设备",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "688260.SH",
+    "name": "昀冢科技",
+    "industry": "消费电子",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "688360.SH",
+    "name": "德马科技",
+    "industry": "通用设备",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "688419.SH",
+    "name": "耐科装备",
+    "industry": "半导体",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  },
+  {
+    "code": "688610.SH",
+    "name": "埃科光电",
+    "industry": "通用设备",
+    "total_zt": 1,
+    "max_ban": 1,
+    "avg_ban": 1.0
+  }
+]
