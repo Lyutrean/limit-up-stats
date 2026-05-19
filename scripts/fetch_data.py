@@ -408,6 +408,46 @@ class LimitUpCollector:
                         total += count
                         continue
 
+            # 跌停备选：akshare（无需代理）
+            if limit_type == 'D':
+                try:
+                    import akshare as ak
+                    # 临时去掉代理（akshare访问东方财富不需要代理）
+                    old_proxy = os.environ.pop('http_proxy', None)
+                    os.environ.pop('https_proxy', None)
+                    try:
+                        df = ak.stock_zt_pool_dtgc_em(date=trade_date)
+                        if df is not None and len(df) > 0:
+                            rows = []
+                            for _, r in df.iterrows():
+                                code = str(r['代码'])
+                                ts_code = f'{code}.SH' if code.startswith(('6','9')) else f'{code}.SZ'
+                                rows.append({
+                                    'trade_date': trade_date,
+                                    'ts_code': ts_code,
+                                    'name': r.get('名称', ''),
+                                    'industry': r.get('所属行业', ''),
+                                    'pct_chg': float(r.get('涨跌幅', -10)),
+                                    'close': float(r.get('最新价', 0)),
+                                    'limit_times': 1,
+                                    'amount': 0, 'fd_amount': 0,
+                                    'float_mv': 0, 'total_mv': 0,
+                                    'turnover_ratio': 0, 'up_stat': '',
+                                    'limit_type': 'D',
+                                })
+                            count = self.db.save_limit_up(rows, source='akshare')
+                            self.db.save_fetch_log(trade_date, f'akshare_{limit_type}', count, 'ok')
+                            log.info(f'  ✅ {label}: 保存 {count} 条 (akshare 备用)')
+                            total += count
+                            continue
+                    finally:
+                        if old_proxy:
+                            os.environ['http_proxy'] = old_proxy
+                except Exception as e:
+                    log.warning(f'  akshare {label} 失败: {e}')
+                    if old_proxy:
+                        os.environ['http_proxy'] = old_proxy
+
             log.warning(f'  ❌ {label} 所有数据源均失败: {trade_date}')
             self.db.save_fetch_log(trade_date, f'all_{limit_type}', 0, 'failed', f'{label}数据源不可用')
 
