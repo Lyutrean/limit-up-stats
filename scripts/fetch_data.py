@@ -46,7 +46,7 @@ class Database:
         conn = sqlite3.connect(self.db_path)
         c = conn.cursor()
         c.executescript('''
-            -- 每日涨停主表
+            -- 每日涨跌停主表
             CREATE TABLE IF NOT EXISTS limit_up (
                 trade_date  TEXT NOT NULL,
                 ts_code     TEXT NOT NULL,
@@ -62,6 +62,7 @@ class Database:
                 turnover_ratio REAL,
                 up_stat     TEXT,
                 source      TEXT DEFAULT 'tushare',
+                limit_type  TEXT DEFAULT 'U',
                 PRIMARY KEY (trade_date, ts_code)
             );
 
@@ -110,7 +111,7 @@ class Database:
         return count > 0
 
     def save_limit_up(self, rows, source='tushare'):
-        """批量保存涨停数据"""
+        """批量保存涨跌停数据"""
         conn = self.get_conn()
         c = conn.cursor()
         inserted = 0
@@ -120,8 +121,8 @@ class Database:
                     INSERT OR REPLACE INTO limit_up
                     (trade_date, ts_code, name, industry, pct_chg, close,
                      limit_times, amount, fd_amount, float_mv, total_mv,
-                     turnover_ratio, up_stat, source)
-                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                     turnover_ratio, up_stat, source, limit_type)
+                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
                 ''', (
                     row.get('trade_date'),
                     row.get('ts_code'),
@@ -136,7 +137,8 @@ class Database:
                     row.get('total_mv'),
                     row.get('turnover_ratio'),
                     row.get('up_stat'),
-                    source
+                    source,
+                    row.get('limit_type', 'U')
                 ))
                 inserted += 1
             except Exception as e:
@@ -220,20 +222,20 @@ class TushareSource:
             log.warning(f'Tushare 交易日历获取失败: {e}')
             return []
 
-    def fetch_limit_list(self, trade_date):
-        """获取某日涨停数据"""
+    def fetch_limit_list(self, trade_date, limit_type='U'):
+        """获取某日涨跌停数据"""
         if not self.is_available():
             return None
         try:
-            df = self.pro.limit_list_d(trade_date=trade_date, limit_type='U')
+            df = self.pro.limit_list_d(trade_date=trade_date, limit_type=limit_type)
             if df is None or len(df) == 0:
-                log.info(f'  Tushare {trade_date}: 无涨停数据')
+                label = '涨停' if limit_type == 'U' else '跌停'
+                log.info(f'  Tushare {trade_date}: 无{label}数据')
                 return []
 
             rows = []
             for _, r in df.iterrows():
                 stock_code = r['ts_code']
-                # 统一 ts_code 格式：去掉后缀 .SZ/.SH 作为代码
                 row = {
                     'trade_date': trade_date,
                     'ts_code': stock_code,
@@ -248,15 +250,18 @@ class TushareSource:
                     'total_mv': float(r.get('total_mv', 0)) if r.get('total_mv') else 0,
                     'turnover_ratio': float(r.get('turnover_ratio', 0)) if r.get('turnover_ratio') else 0,
                     'up_stat': r.get('up_stat', ''),
+                    'limit_type': limit_type,
                 }
                 rows.append(row)
 
-            log.info(f'  Tushare {trade_date}: {len(rows)}只涨停')
+            label = '涨停' if limit_type == 'U' else '跌停'
+            log.info(f'  Tushare {trade_date}: {len(rows)}只{label}')
             time.sleep(1.2)  # 限速控制
             return rows
 
         except Exception as e:
-            log.warning(f'  Tushare {trade_date} 失败: {e}')
+            label = '涨停' if limit_type == 'U' else '跌停'
+            log.warning(f'  Tushare {trade_date} {label}失败: {e}')
             time.sleep(2)
             return None  # None 表示出错，需要切换数据源
 
@@ -372,33 +377,41 @@ class LimitUpCollector:
         self.qstock = QstockSource()
 
     def fetch_single_date(self, trade_date):
-        """从多数据源获取某一天的数据，自动容错"""
+        """从多数据源获取某一天的涨跌停数据，自动容错"""
         log.info(f'--- 采集 {trade_date} ---')
 
-        # 先尝试 Tushare
-        if self.tushare.is_available():
-            rows = self.tushare.fetch_limit_list(trade_date)
-            if rows is not None:
-                # 成功获取到数据（可能为空列表=无涨停，非None）
-                count = self.db.save_limit_up(rows, source='tushare')
-                status = 'ok' if len(rows) > 0 else 'empty'
-                self.db.save_fetch_log(trade_date, 'tushare', count, status)
-                log.info(f'  ✅ 保存 {count} 条 (tushare)')
-                return count
+        total = 0
+        for limit_type in ['U', 'D']:
+            label = '涨停' if limit_type == 'U' else '跌停'
+            # 先尝试 Tushare
+            if self.tushare.is_available():
+                rows = self.tushare.fetch_limit_list(trade_date, limit_type=limit_type)
+                if rows is not None:
+                    count = self.db.save_limit_up(rows, source='tushare')
+                    status = 'ok' if len(rows) > 0 else 'empty'
+                    self.db.save_fetch_log(trade_date, f'tushare_{limit_type}', count, status)
+                    log.info(f'  ✅ {label}: 保存 {count} 条 (tushare)')
+                    total += count
+                    continue
 
-        # Tushare 失败，尝试 qstock（仅今日）
-        today_str = datetime.now().strftime('%Y%m%d')
-        if trade_date == today_str:
-            rows = self.qstock.fetch_today_limit_up()
-            if rows:
-                count = self.db.save_limit_up(rows, source='qstock')
-                self.db.save_fetch_log(trade_date, 'qstock', count, 'ok')
-                log.info(f'  ✅ 保存 {count} 条 (qstock 备用)')
-                return count
+            # Tushare 失败，尝试 qstock（仅今日，且qstock似乎只能取涨停）
+            if limit_type == 'U':
+                today_str = datetime.now().strftime('%Y%m%d')
+                if trade_date == today_str:
+                    rows = self.qstock.fetch_today_limit_up()
+                    if rows:
+                        for r in rows:
+                            r['limit_type'] = 'U'
+                        count = self.db.save_limit_up(rows, source='qstock')
+                        self.db.save_fetch_log(trade_date, f'qstock_{limit_type}', count, 'ok')
+                        log.info(f'  ✅ {label}: 保存 {count} 条 (qstock 备用)')
+                        total += count
+                        continue
 
-        log.warning(f'  ❌ 所有数据源均失败: {trade_date}')
-        self.db.save_fetch_log(trade_date, 'all', 0, 'failed', '所有数据源不可用')
-        return 0
+            log.warning(f'  ❌ {label} 所有数据源均失败: {trade_date}')
+            self.db.save_fetch_log(trade_date, f'all_{limit_type}', 0, 'failed', f'{label}数据源不可用')
+
+        return total
 
     def fetch_history(self, start_date, end_date):
         """批量拉取历史数据"""
