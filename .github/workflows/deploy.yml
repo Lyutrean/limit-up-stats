@@ -1,0 +1,21 @@
+name: 自动部署到云服务器
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: 连接服务器并更新
+      uses: appleboy/ssh-action@v1
+      with:
+        host: 82.156.124.171
+        username: root
+        password: 199044@Wode
+        script: |
+          cd /root/limit-up-stats
+          git pull origin master
+          systemctl restart limit-up-stats
+          echo "✅ 部署完成 $(date)"
